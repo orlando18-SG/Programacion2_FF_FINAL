@@ -1,12 +1,14 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static int idAsistencia = 1;
     private static List<Asistencia> asistencias = new ArrayList<>();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         List<Departamento> departamentos = new ArrayList<>();
@@ -24,11 +26,11 @@ public class Main {
             System.out.println("5. Listar Áreas");
             System.out.println("6. Listar Trabajadores");
             System.out.println("7. Iniciar Sesión");
-            System.out.println("8. Listar Seciones");
-            System.out.println("9. Salir");
+            System.out.println("8. Listar Sesiones");
+            System.out.println("9. Descontar sueldo trabajador");
+            System.out.println("10. Salir");
             System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine(); // Limpiar el buffer de entrada
+            int opcion = obtenerEntero(scanner, "Por favor, ingrese una opción valida: ");
 
             switch (opcion) {
                 case 1:
@@ -62,6 +64,9 @@ public class Main {
                     listarSesiones(asistencias);
                     break;
                 case 9:
+                    descontarSueldoTrabajador(scanner, trabajadores);
+                    break;
+                case 10:
                     salir = true;
                     break;
                 default:
@@ -71,10 +76,34 @@ public class Main {
         scanner.close();
     }
 
+    // Método para obtener un entero
+    private static int obtenerEntero(Scanner scanner, String mensaje) {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print(mensaje);
+                scanner.next(); // Consumir la entrada incorrecta del usuario
+            }
+        }
+    }
+
+    // Método para obtener un decimal
+    private static double obtenerDecimal(Scanner scanner, String mensaje) {
+        while (true) {
+            try {
+                return scanner.nextDouble();
+            } catch (InputMismatchException e) {
+                System.out.print(mensaje);
+                scanner.next(); // Consumir la entrada incorrecta del usuario
+            }
+        }
+    }
+
     // Método para registrar un departamento
     private static void registrarDepartamento(Scanner scanner, List<Departamento> departamentos) {
         System.out.print("Ingrese el ID del departamento: ");
-        int id = scanner.nextInt();
+        int id = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
         System.out.print("Ingrese el nombre del departamento: ");
         String nombre = scanner.nextLine();
@@ -90,12 +119,12 @@ public class Main {
             return;
         }
         System.out.print("Ingrese el ID del área: ");
-        int id = scanner.nextInt();
+        int id = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
         System.out.print("Ingrese el nombre del área: ");
         String nombre = scanner.nextLine();
         System.out.print("Ingrese el ID del departamento al que pertenece: ");
-        int idDepartamento = scanner.nextInt();
+        int idDepartamento = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
 
         // Verificar si el departamento existe
@@ -123,7 +152,7 @@ public class Main {
             return;
         }
         System.out.print("Ingrese el ID del trabajador: ");
-        int id = scanner.nextInt();
+        int id = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
         System.out.print("Ingrese el RUC del trabajador: ");
         String ruc = scanner.nextLine();
@@ -134,7 +163,7 @@ public class Main {
         System.out.print("Ingrese el sexo del trabajador: ");
         String sexo = scanner.nextLine();
         System.out.print("Ingrese el teléfono del trabajador: ");
-        int telefono = scanner.nextInt();
+        int telefono = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
         System.out.print("Ingrese la fecha de nacimiento del trabajador: ");
         String fechaNacimiento = scanner.nextLine();
@@ -144,8 +173,10 @@ public class Main {
         String correo = scanner.nextLine();
         System.out.print("Ingrese la contraseña del trabajador: ");
         String contraseña = scanner.nextLine();
+        System.out.print("Ingrese el sueldo del trabajador: ");
+        double sueldo = obtenerDecimal(scanner, "Por favor, ingrese un número decimal válido: ");
         System.out.print("Ingrese el ID del área al que pertenece el trabajador: ");
-        int idArea = scanner.nextInt();
+        int idArea = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
 
         // Verificar si el área existe
@@ -161,7 +192,7 @@ public class Main {
             return;
         }
 
-        Trabajador trabajador = new Trabajador(id, ruc, nombre, apPaterno, sexo, telefono, fechaNacimiento, direccion, correo, contraseña, idArea);
+        Trabajador trabajador = new Trabajador(id, ruc, nombre, apPaterno, sexo, telefono, sueldo, fechaNacimiento, direccion, correo, contraseña, idArea);
         trabajadores.add(trabajador);
         System.out.println("Trabajador registrado correctamente.");
     }
@@ -191,7 +222,7 @@ public class Main {
             System.out.println("4. Listar mis asistencias");
             System.out.println("5. Cerrar sesión");
             System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
+            int opcion = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
             scanner.nextLine(); // Limpiar el buffer de entrada
 
             switch (opcion) {
@@ -251,7 +282,7 @@ public class Main {
     // Método para actualizar datos del trabajador
     private static void actualizarDatosTrabajador(Scanner scanner, Trabajador trabajador) {
         System.out.print("Ingrese el nuevo teléfono: ");
-        int telefono = scanner.nextInt();
+        int telefono = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
         scanner.nextLine(); // Limpiar el buffer de entrada
         System.out.print("Ingrese la nueva dirección: ");
         String direccion = scanner.nextLine();
@@ -279,12 +310,14 @@ public class Main {
     private static void listarTrabajadores(List<Trabajador> trabajadores) {
         System.out.println("--- Trabajadores Registrados ---");
         for (Trabajador trabajador : trabajadores) {
-            System.out.println("ID: " + trabajador.getId_trabajador() + ", Nombre: " + trabajador.getNombre() + ", Apellido: " + trabajador.getAp_paterno());
+            System.out.println("ID: " + trabajador.getId_trabajador() + ", Nombre: " + trabajador.getNombre() + ", Apellido: " + trabajador.getAp_paterno() + ", Sueldo: " + trabajador.getSueldo());
         }
     }
+
     private static void registrarAsistencia(Trabajador trabajador) {
         asistencias.add(new Asistencia(idAsistencia++, trabajador.getCorreo(), LocalDateTime.now()));
     }
+
     private static void listarSesiones(List<Asistencia> asistencias) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         System.out.println("--- Asistencias Registradas ---");
@@ -292,6 +325,34 @@ public class Main {
             String fechaInicio = asistencia.getFechaInicioSesion().format(formatter);
             String fechaCierre = asistencia.getFechaCierreSesion() != null ? asistencia.getFechaCierreSesion().format(formatter) : "Sesión aún abierta";
             System.out.println("ID: " + asistencia.getIdAsistencia() + ", Correo: " + asistencia.getCorreoUsuario() + ", Fecha y Hora Inicio: " + fechaInicio + ", Fecha y Hora Cierre: " + fechaCierre);
+        }
+    }
+
+    private static void descontarSueldoTrabajador(Scanner scanner, List<Trabajador> trabajadores) {
+        try {
+            System.out.print("Ingrese el ID del trabajador al que desea descontar el sueldo: ");
+            int idTrabajador = obtenerEntero(scanner, "Por favor, ingrese un número entero válido: ");
+            scanner.nextLine(); // Limpiar el buffer de entrada
+
+            Trabajador trabajador = null;
+            for (Trabajador t : trabajadores) {
+                if (t.getId_trabajador() == idTrabajador) {
+                    trabajador = t;
+                    break;
+                }
+            }
+
+            if (trabajador == null) {
+                System.out.println("No se encontró ningún trabajador con el ID proporcionado.");
+            } else {
+                System.out.print("Ingrese el monto a descontar del sueldo: ");
+                double monto = obtenerDecimal(scanner, "Por favor, ingrese un número decimal válido: ");
+                scanner.nextLine(); // Limpiar el buffer de entrada
+                trabajador.descontarSueldo(monto);
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Entrada no válida. Por favor, ingrese un valor numérico válido.");
+            scanner.nextLine(); // Limpiar el buffer de entrada
         }
     }
 }
